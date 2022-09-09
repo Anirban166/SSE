@@ -19,3 +19,14 @@ In order to understand this section (3.2 Password Eavesdropping Risks) through s
 Ideally, protocols in the realm of security are constantly subject to change. (if they are not, then they'll probably be redundant in a few years, or sometimes even sooner)
 
 Vulnerabilities are ever so existent, and curious entities will always find a way to break systems, or reverse engineer the patterns of security. Here's a [video](https://www.youtube.com/watch?v=VVJldn_MmMY) by Kingpin from L0pht that got me hooked into the scene early on.
+
+> Responding to a person's thoughts
+
+In a much broader sense, security theater can be applied to everything, given that security is never achieved completely, and at best, we only get a sense of it. I've dealt with systems requiring more than 2FA or two forms of auth, and these stacked layers of authentication definitely add up to limit potential breaches, although in the end its entirely possible to still break any number of security layers, given proper preparation and resources.
+
+<details>
+<summary>A question for the same person</summary>
+It seems that the world at present has to a certain extent, a degree of trust in SSL/TLS certificates that are being strictly enforced everywhere with https-based protocol connections. Under the hood, most browser to web-server (and vice versa) connections are encrypted using a 256-bit private key under modern cryptographic routines (I'm not entirely sure of the algorithms, but I presume they still use elliptic curves in most places, like ECDSA for digital signatures) that are deemed to be 'secure' for the moment.
+
+Considering the modern-day implementations of SSL in our browsers (and not the former ones with major known bugs, or not Heartbleed for Apple's iOS), do you think they provide anything else apart from a sense of security?
+</details>
