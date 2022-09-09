@@ -42,3 +42,33 @@ I've seen people post plane tickets on social media in real-time (i.e., before t
 I've never been affected by this or have shared details online or to people I don't know/trust to make it possible in obvious terms, but I still specifically request airlines to include another layer of authentication (nobody would usually care, but the confirmation number can be practically brute forced if the airlines' API doesn't rate-limit attempts to check a flight - and that too is usually based on the IP address for a session, which can be changed effectively for an attack, unless there are methods for shadow blocking via use of device addresses), which I usually get to be a previously recorded security question or passcode when trying to access my flight details online, or other personal details while trying to access over the phone. Depending on the airline's protocols or how they operate and deal with this, this additional layer of authentication may vary, and for some there may even be none!
 
 No airline that I'm aware of establishes a lock that guarantees that a flight cannot be cancelled, for good reasons - one being the reasonable aspect (you should have the option to cancel if you really require to do so for whatever rationale that arises) and the other being the profitable (for them) one (the airline system always assumes that you might not be available even when you booked and are in fact till the last moment - this is what leads to overbooking of a flight). Thus, it becomes all the more important to enforce this additional step.
+
+> Stolen OAuth Access Tokens
+
+[Here's](https://thehackernews.com/2022/04/github-says-hackers-breach-dozens-of.html) a recent data breach reported by GitHub and published at Hackernews.
+
+(I also received an email from GitHub at the time this was reported, notifying me of the potential data leak, given that I was using Travis-CI to run package checks for one of my projects, and presumably also since I had two deployments up at Heroku as well, both linked via GitHub repositories - much like mentioned towards the end of that post, or in accordance to what GitHub said about notifying the known-affected/victim users)
+
+As disclosed therein, an attacker abused stolen OAuth user tokens that were formerly issued to two third-party OAuth integrators, Heroku and Travis CI. The attacker was able to download data from dozens of organizations, which included private data not meant to be disclosed elsewhere, within the scope of what those services required from those private repositories. This is a direct breach of confidentiality.
+
+For quick reference, the very definition of the term from the very first chapter of Anderson's SE is:
+
+'*Confidentiality involves an obligation to protect some other person’s or organization’s secrets if you know them.*'
+
+In this case, the data breach included organization secrets (like GitHub secrets or tokens for an organization), which GitHub uses for authentication to CI/CD services and deployment hosting services. This in turn means those services can be accessed under the organization's name, and the attacker can gain access to logs and valuable insider insights.
+
+Personally, I don't think I have been affected by this in terms of any noticeable concerns that I can visibly see, but I definitely suspect that companies whose CI/CD pipelines export and save data in between those services could have their data compromised (and this really depends on what type of data they are dealing with).
+
+In terms of Integrity, maintaining the trustworthiness of these GitHub secrets entirely depends on the bridge between the platforms (i.e., GitHub and Travis/Heroku), and future violations would definitely downscale the integrity that has been established over time. As for availability, the consistently and readily accessible nature of those services wasn't really affected for the customers, may it be individuals like me or a bunch from organizations/companies that use GitHub. It's more of an information leak allowing an outsider access to platform data, and not a bug that breaks things.
+
+> Responding to a person responding to me
+
+*Context: Knowing that your data might have been leaked could affect how future clients trust using a site/program.*
+
+I've read somewhere that in addition to possible new clients swaying away from the decision to use those services, some former customers left the platform as well after this incident. Sidenote: I'm still using Heroku, but I'll be leaving it soon since it won't be free starting November 28th this year :)
+
+A good security breach is all it takes to bring down the reputation (maybe not completely, but in an impactful manner, certainly) and trust-factor for a company/product providing a service.
+
+> A clarification
+
+This form of authentication is either for a good period of time (like we can login to NAU for a week or so on a specific browser or client) or it is a 'one-time' thing required only for the first use when you connect (say, your GitHub account and the select repositories including private ones) to these platforms (like I don't personally authenticate time and again for any of my code coverage or unit testing workflows after the initial connection with CI/CD platforms, thanks to the token supplied by GitHub Secrets which automates this OAuth procedure for me). The latter seems to be the case here.
