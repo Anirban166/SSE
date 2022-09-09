@@ -22,11 +22,23 @@ Vulnerabilities are ever so existent, and curious entities will always find a wa
 
 > Responding to a person's thoughts
 
-In a much broader sense, security theater can be applied to everything, given that security is never achieved completely, and at best, we only get a sense of it. I've dealt with systems requiring more than 2FA or two forms of auth, and these stacked layers of authentication definitely add up to limit potential breaches, although in the end its entirely possible to still break any number of security layers, given proper preparation and resources.
+In a much broader sense, security theater can be applied to everything, given that security is never achieved completely, and at best, we only get a sense of it. I've dealt with systems requiring more than 2FA or two forms of auth, and these stacked layers of authentication definitely add up to limit potential breaches, although in the end its entirely possible to still break any number of security layers with proper preparation and resources.
 
 <details>
 <summary>A question for the same person</summary>
 It seems that the world at present has to a certain extent, a degree of trust in SSL/TLS certificates that are being strictly enforced everywhere with https-based protocol connections. Under the hood, most browser to web-server (and vice versa) connections are encrypted using a 256-bit private key under modern cryptographic routines (I'm not entirely sure of the algorithms, but I presume they still use elliptic curves in most places, like ECDSA for digital signatures) that are deemed to be 'secure' for the moment.
 
-Considering the modern-day implementations of SSL in our browsers (and not the former ones with major known bugs, or not Heartbleed for Apple's iOS), do you think they provide anything else apart from a sense of security?
+Considering the modern-day implementations of SSL in our browsers (and not the former ones with major known bugs, or not Heartbleed for Apple's iOS), do you think they provide anything else apart from a sense of security when surfing the internet?
 </details>
+
+> Access protocols for reservations in commerical aviation
+
+Modifying reservations for booked flights (changing itinerary or details for passengers/services, cancellation of the trip, etc.) is something that should either have a decent layer of security, or a few layers of authentication to avoid unwanted access. But it tends to not be the case for both these options.
+
+The air travel sector is one which usually requires a decent level of security, but I’m still surprised that till date all airlines that I have travelled with only rely on the combination of a short alphanumeric string (typically 6 characters long) and my surname to provide one with access to my flight details with modification capabilities. (compare that with the physical security in the airport, which is relatively better)
+
+I've seen people post plane tickets on social media in real-time (i.e., before their flight's departure and not after the trip) that contain both their surname (although most people would already know of their full name anyway so knowing this is usually a no brainer) and confirmation numbers, which makes them vulnerable to have direct changes to their flight by an outsider, such as cancellation of their reservation itself at the worst. This has actually happened several times in the past. While most travellers nowadays are aware of this, they still tend to share their confirmation numbers to online groups or print shops, which makes this minor security breach act very feasible.
+
+I've never been affected by this or have shared details online or to people I don't know/trust to make it possible in obvious terms, but I still specifically request airlines to include another layer of authentication (nobody would usually care, but the confirmation number can be practically brute forced if the airlines' API doesn't rate-limit attempts to check a flight - and that too is usually based on the IP address for a session, which can be changed effectively for an attack, unless there are methods for shadow blocking via use of device addresses), which I usually get to be a previously recorded security question or passcode when trying to access my flight details online, or other personal details while trying to access over the phone. Depending on the airline's protocols or how they operate and deal with this, this additional layer of authentication may vary, and for some there may even be none!
+
+No airline that I'm aware of establishes a lock that guarantees that a flight cannot be cancelled, for good reasons - one being the reasonable aspect (you should have the option to cancel if you really require to do so for whatever rationale that arises) and the other being the profitable (for them) one (the airline system always assumes that you might not be available even when you booked and are in fact till the last moment - this is what leads to overbooking of a flight). Thus, it becomes all the more important to enforce this additional step.
