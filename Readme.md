@@ -72,3 +72,35 @@ A good security breach is all it takes to bring down the reputation (maybe not c
 > A clarification
 
 This form of authentication is either for a good period of time (like we can login to NAU for a week or so on a specific browser or client) or it is a 'one-time' thing required only for the first use when you connect (say, your GitHub account and the select repositories including private ones) to these platforms (like I don't personally authenticate time and again for any of my code coverage or unit testing workflows after the initial connection with CI/CD platforms, thanks to the token supplied by GitHub Secrets which automates this OAuth procedure for me). The latter seems to be the case here.
+
+> Apple's 'Heartbleed' vulnerability: https://heartbleed.com/
+
+During the month of February in 2014, Apple pushed a security update that affected the transport layer security protocol via SecureTransport for iOS (version < 7.0.6) and even OS X (version < 10.9.2) that basically allowed anyone on the internet who used that version of OpenSSL (which is a software library that secures communication over computer networks, and this was Apple's implementation of it) to access or read the memory of the servers that hold information for the web (all connections that went through that particular OpenSSL version). This potentially allowed attackers to eavesdrop on communications over websites or applications using that TLS protocol since the encryption could be bypassed, and thus they could also steal data directly from the services/users and impersonate them.
+
+The vulnerability leverages the additional `goto` statement that comes after the second if-conditional in the function which verifies the exchange of signed messages: (signed using a key given by some encryption scheme) 
+```c
+static OSStatus
+SSLVerifySignedServerKeyExchange(SSLContext *ctx, bool isRsa, SSLBuffer signedParams, uint8_t *signature, UInt16 signatureLen)
+{
+	OSStatus        err;
+	...
+
+	if ((err = SSLHashSHA1.update(&hashCtx, &serverRandom)) != 0)
+		goto fail;
+	if ((err = SSLHashSHA1.update(&hashCtx, &signedParams)) != 0)
+		goto fail;
+		goto fail;
+	if ((err = SSLHashSHA1.final(&hashCtx, &hashOut)) != 0)
+		goto fail;
+	...
+
+fail:
+	SSLFreeBuffer(&signedHashes);
+	SSLFreeBuffer(&hashCtx);
+	return err;
+}
+// Link to the full code: https://opensource.apple.com/source/Security/Security-55471/libsecurity_ssl/lib/sslKeyExchange.c
+```
+Now `goto` is in itself unconditional, but the intent of that particular `goto` was to be inside that if-conditional and to execute only when the `update` method for the SHA1 hash object does not return a value that would make `err` to be 0. The `goto` for the signed parameter check (again, the second `if` statement) would not be executed if the encryption is not met, which is what we would usually want. But since the second one is not inside the `if` scope, it gets executed irrespective of the value of `err` (or even when the update method is not successful) and jumps into the `fail` label, which basically returns the status to be positive always, and the signature verification thus never fails. (meaning the encryption here is meaningless)
+
+At present, I think that this sort of vulnerability can be fairly easily detected through a static analysis tool (given that it's just something out open in plain source code) or with a compile-time check which ascertains that `goto` statements do not lie out of a branch (which I think would be a custom rule, but it's recommended to write a static analysis tool for one's use case software system than to rely on the standard rules that apply to any project for a targeted language). One way to do this would be to look for all `goto`s to fall positive under branch coverage. 
