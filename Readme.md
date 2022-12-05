@@ -185,3 +185,26 @@ The first chapter gave a brief introduction to 'Bug Hunting' and discussed a bit
 The second chapter is focused on a bug in the VLC media player that the author found (dates back to '08, as per the diary record), with detailed steps he performed in order to potentially discover the vulnerability, and how he exploits it (again, he does so with reference to what he talked about in chapter one, such as finding paths to reach to/near the vulnerable code's location and later gaining control of the instruction pointer to execute commands as he wills, for which he mentions to have used the jmp reg technique for this one). I like how the author talks about various ways of disclosing the bug (if I ever so happen to discover one, I've always wondered what would be my options!), out of which he choose the coordinated manner. To help in writing code less prone to bugs, it's insightful to look at the 'lessons learned' section for each chapter as well.
 
 Chapter seven is yet another interesting hack delivered well as a story in the format that the author has been following. He was able to make the OS X kernel (XNU version, with FreeBSD version < 4.4) panic and lead to a crash with his program that had just eleven lines of code (targeting the kernel code where IOCTL requests are handled), whilst executing without any privileges (which does count as an privilege escalation!). After taking control of the EIP (following his sequential steps for an exploit), he was also able to achieve arbritrary code execution at the kernel level as written in the text towards the end of section 7.2. (he mentions the steps involved therein; no code though as he claims to abide by the law by not publicizing that)
+
+> Inputs
+
+User inputs could very well be equivalent to the definition of trust issues, as they can be in a form that is easily subjected to risk (most common being no checks for validating inputs in one's program) especially if they can be code itself or if they can manipulate the logic in one's program directly. SQL queries are a perfect example of this.
+
+[This](https://dl.acm.org/doi/10.1145/1390630.1390661) paper introduces an automated input test generation algorithm (with constraint resolving) to find bugs in real world web applications written in PHP which previously couldn't be found out through the latest and greatest of static analysis tools (primarily because of dynamic features in that interpreted language which inhibit proper analysis) and the standard concolic testing procedures. (It was successful in detecting known SQL injection vulnerabilities in open-source tools such as Mantis and Mambo)
+
+> XSS
+
+Cross-site scripting involves injection of a malicious script or code into trusted web applications or websites that have exploitable vulnerabilities. A successful attack usually accesses session tokens and cookies retained by the browser when a user used or is using a site, which allows the invokers to leverage someone's logged in sessions for bypassing authentication.
+
+During Fall '18, a high-profile hacker group known as Magecart targeted British Airways and successfully exploited a XSS vulnerability in their website, feeding upon a vulnerability in a JavaScript library called Feedify. The attackers successfully stole credit card data (direct breach of confidentiality) from thousands of transactions before the breach was discovered (380k to 500k was the reported number of users affected). They wrote a 22-line script to send customer data to one of their servers, whilst keeping the domain name alike to that of British Airways. The fake server also had an SSL ceritificate, which is probably the reason why users had trust when they were making transactions through that website. 
+
+It seems like that library is integrated so it can collect feedback from the users/customers of the British Airway's site. Now while the scope might seem minimal with that, feedback is usually always prompted for collection after transactions and that means there is always a call to Feedify's servers, where the code they had was exploited by MageCart's malware, making its way to the source script and injecting the malicious modifications.
+
+Static analysis might have been useful if the analyzer had access to read the source code of that imported JS library (which in ordinary conditions would not be open-sourced I reckon, but then integration testing is super important, especially for sketchy services).
+
+> Coverage
+
+I view the process of measuring code coverage as an essential part of the testing routine, although the metric in itself does not speak volumes. In general, the quality of tests written are far more important than just writing tests that cover all or most of one's code.
+This comes from my previous experiences of measuring coverage for R and C++ code using tools and APIs before, including the integration into CI/CD pipelines for automatic code coverage report generation based on updates to a codebase.
+
+However, fuzzers utilizing code coverage as a metric for guidance (greybox or coverage-guided fuzzers i.e.) in their instrumentation are usually better off than ones that do not trace for new paths via coverage-based feedback (essentially missing out on parts of the target program where the fuzzer wasn't able to venture into). As a heuristic in fuzzers thus, it's more cashmoney.
